@@ -9,156 +9,123 @@
 
 using namespace std;
 
-class Text
+class Vector2
 {
-public:
-private:
-    string text = "";
+    private:
+    public:
+    Vector2(int _X, int _Y) : X(_X), Y(_Y)
+    {
+
+    }
     int X, Y;
-    int sizeX, sizeY;
+};
+
+class UIElement
+{
+    public:
+    virtual void Draw(Vector2 vetcor2, string frame[SIZE_Y][SIZE_X]) = 0;
 };
 
 class Dot
 {
     public:
-    Dot(int _X, int _Y)
+    Vector2 position;
+    Dot(int _X, int _Y) : position(_X, _Y)
     {
-        X = _X;
-        Y = _Y;
-    }
-    void setX(int _X)
-    {
-        X = _X;
-    }
-    void setY(int _Y)
-    {
-        Y = _Y;
-    }
-    int getX()
-    {
-        return X;
-    }
-    int getY()
-    {
-        return Y;
     }
     private:
-    int X, Y;
 };
 
-class Window
+class Text
 {
 public:
-    Window(int _X, int _Y, int _sizeX, int _sizeY)
+    string text = "";
+    Vector2 position;
+    Vector2 size;
+private:
+};
+
+class Window : public UIElement
+{
+public:
+    Vector2 position;
+    Vector2 size;
+    Window(int _X, int _Y, int _sizeX, int _sizeY) : position(_X, _Y), size(_sizeX, _sizeY)
     {
-        X = _X;
-        Y = _Y;
-        sizeX = _sizeX;
-        sizeY = _sizeY;
     }
-    int getX()
+
+    void Draw(Vector2 vector2, string frame[SIZE_Y][SIZE_X]) override
     {
-        return X;
-    }
-    int getY()
-    {
-        return Y;
-    }
-    int getSizeX()
-    {
-        return sizeX;
-    }
-    int getSizeY()
-    {
-        return sizeY;
+        cout << "draw\n";
     }
 private:
-    //X and Y coorfinates of upper-left corner
-    int X, Y;
-    //X and Y size from upper-left corner
-    int sizeX, sizeY;
 };
 
 class Screen
 {
 public:
     list<Window> windowsToDraw;
+    list<UIElement*> draw;
     list<Dot> dotToDraw;
+    Vector2 size;
 
-    Screen(int _sizeX, int _sizeY)
+    Screen(int _sizeX, int _sizeY) : size(_sizeX, _sizeY)
     {
-        sizeX = _sizeX;
-        sizeY = _sizeY;
     }
 
     void CreateWindow(int _X, int _Y, int _sizeX, int _sizeY)
     {
         Window newWindow = *new Window(_X, _Y, _sizeX, _sizeY);
         windowsToDraw.push_back(newWindow);
+        draw.push_back(&newWindow);
     }
 
     void UpdateScreen()
     {
-        for (int i = 0; i < sizeY; i++)
+        // for (int i = 0; i < size.Y; i++)
+        // {
+        //     for (int j = 0; j < size.X; j++)
+        //     {
+        //         framePixels[i][j] = ' ';
+        //     }
+        // }
+        // for(auto wtd : windowsToDraw)
+        // {
+        //     for(int i = wtd.position.Y; i < wtd.position.Y + wtd.size.Y; i++)
+        //     {
+        //         for(int j = wtd.position.X; j < wtd.position.X + wtd.size.X; j++)
+        //         {
+        //             if(i == wtd.position.Y || i == wtd.position.Y + wtd.size.Y - 1 || j == wtd.position.X || j == wtd.position.X + wtd.size.X - 1)
+        //             {
+        //                 framePixels[i][j] = WHITE_EMPTY;
+        //             }
+        //         }
+        //     }
+        // }
+        // for(auto dtd : dotToDraw)
+        // {
+        //     framePixels[dtd.position.Y][dtd.position.X] = WHITE_EMPTY;
+        // }
+
+        for(auto etd : draw)
         {
-            for (int j = 0; j < sizeX; j++)
-            {
-                framePixels[i][j] = ' ';
-            }
-        }
-        for(auto wtd : windowsToDraw)
-        {
-            for(int i = wtd.getY(); i < wtd.getY() + wtd.getSizeY(); i++)
-            {
-                for(int j = wtd.getX(); j < wtd.getX() + wtd.getSizeX(); j++)
-                {
-                    if(i == wtd.getY() || i == wtd.getY() + wtd.getSizeY() - 1 || j == wtd.getX() || j == wtd.getX() + wtd.getSizeX() - 1)
-                    {
-                        framePixels[i][j] = WHITE_EMPTY;
-                    }
-                }
-            }
-        }
-        for(auto dtd : dotToDraw)
-        {
-            framePixels[dtd.getY()][dtd.getX()] = WHITE_EMPTY;
+            etd->Draw(size, &framePixels[0]);
         }
     }
     void PrintScreen()
     {
         UpdateScreen();
-        system("clear");
-        for (int i = 0; i < sizeY; i++)
+        //system("clear");
+        for (int i = 0; i < size.Y; i++)
         {
-            for (int j = 0; j < sizeX; j++)
+            for (int j = 0; j < size.X; j++)
             {
                 cout << framePixels[i][j];
             }
             cout << endl;
         }
-
-        /*for (int i = 0; i < sizeY; i++)
-        {
-            for (int j = 1; j <= LEFT_BORDER; j++)
-            {
-                cout << WHITE_EMPTY;
-            }
-
-            for (int j = 0; j < sizeX; j++)
-            {
-                cout << framePixels[i][j];
-            }
-
-            for (int j = 1; j <= RIGHT_BORDER; j++)
-            {
-                cout << WHITE_EMPTY;
-            }
-
-            cout << endl;
-        }*/
     }
 
 private:
     string framePixels[SIZE_Y][SIZE_X];
-    int sizeX, sizeY;
 };
