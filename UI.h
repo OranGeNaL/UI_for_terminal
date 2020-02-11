@@ -11,29 +11,33 @@ using namespace std;
 
 class Vector2
 {
-    private:
-    public:
+private:
+public:
     Vector2(int _X, int _Y) : X(_X), Y(_Y)
     {
-
     }
     int X, Y;
 };
 
 class UIElement
 {
-    public:
-    virtual void Draw(Vector2 vetcor2, string frame[SIZE_Y][SIZE_X]) = 0;
+public:
+    virtual void Draw(Vector2 vetcor2, string **frame) = 0;
 };
 
-class Dot
+class Dot : public UIElement
 {
-    public:
+public:
     Vector2 position;
     Dot(int _X, int _Y) : position(_X, _Y)
     {
     }
-    private:
+    void Draw(Vector2 vector2, string **frame) override
+    {
+        frame[position.Y][position.Y] = WHITE_EMPTY;
+    }
+
+private:
 };
 
 class Text
@@ -42,6 +46,7 @@ public:
     string text = "";
     Vector2 position;
     Vector2 size;
+
 private:
 };
 
@@ -54,68 +59,66 @@ public:
     {
     }
 
-    void Draw(Vector2 vector2, string frame[SIZE_Y][SIZE_X]) override
+    void Draw(Vector2 vector2, string **frame) override
     {
-        cout << "draw\n";
+        for(int i = 0; i < size.Y; i++)
+        {
+            for(int j = 0; j < size.X; j++)
+            {
+                if(i == 0 || j == 0 || i == size.Y - 1 || j == size.X - 1)
+                {
+                    frame[i + position.Y][j + position.X] = WHITE_EMPTY;
+                }
+            }
+        }
     }
+
 private:
 };
 
 class Screen
 {
 public:
-    list<Window> windowsToDraw;
-    list<UIElement*> draw;
-    list<Dot> dotToDraw;
+    list<UIElement *> draw;
     Vector2 size;
 
     Screen(int _sizeX, int _sizeY) : size(_sizeX, _sizeY)
     {
+        framePixels = new string *[SIZE_Y];
+        for (int i = 0; i < SIZE_Y; i++)
+            framePixels[i] = new string[SIZE_X];
     }
 
     void CreateWindow(int _X, int _Y, int _sizeX, int _sizeY)
     {
-        Window newWindow = *new Window(_X, _Y, _sizeX, _sizeY);
-        windowsToDraw.push_back(newWindow);
-        draw.push_back(&newWindow);
+        draw.push_back(new Window(_X, _Y, _sizeX, _sizeY));
+    }
+
+    void CreateDot(int _X, int _Y)
+    {
+        draw.push_back(new Dot(_X, _Y));
     }
 
     void UpdateScreen()
     {
-        // for (int i = 0; i < size.Y; i++)
-        // {
-        //     for (int j = 0; j < size.X; j++)
-        //     {
-        //         framePixels[i][j] = ' ';
-        //     }
-        // }
-        // for(auto wtd : windowsToDraw)
-        // {
-        //     for(int i = wtd.position.Y; i < wtd.position.Y + wtd.size.Y; i++)
-        //     {
-        //         for(int j = wtd.position.X; j < wtd.position.X + wtd.size.X; j++)
-        //         {
-        //             if(i == wtd.position.Y || i == wtd.position.Y + wtd.size.Y - 1 || j == wtd.position.X || j == wtd.position.X + wtd.size.X - 1)
-        //             {
-        //                 framePixels[i][j] = WHITE_EMPTY;
-        //             }
-        //         }
-        //     }
-        // }
-        // for(auto dtd : dotToDraw)
-        // {
-        //     framePixels[dtd.position.Y][dtd.position.X] = WHITE_EMPTY;
-        // }
 
-        for(auto etd : draw)
+        for (int i = 0; i < size.Y; i++)
         {
-            etd->Draw(size, &framePixels[0]);
+            for (int j = 0; j < size.X; j++)
+            {
+                framePixels[i][j] = ' ';
+            }
+        }
+
+        for (auto etd : draw)
+        {
+            etd->Draw(size, framePixels);
         }
     }
     void PrintScreen()
     {
         UpdateScreen();
-        //system("clear");
+        system("clear");
         for (int i = 0; i < size.Y; i++)
         {
             for (int j = 0; j < size.X; j++)
@@ -127,5 +130,5 @@ public:
     }
 
 private:
-    string framePixels[SIZE_Y][SIZE_X];
+    string **framePixels;
 };
