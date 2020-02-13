@@ -3,7 +3,6 @@
 #include <string>
 #include "UI.h"
 #include "exper.h"
-#include "Draw.h"
 
 using namespace std;
 
@@ -19,7 +18,7 @@ int main()
     screen1.FindElement("Window1")->GetComponent(Vector2(0,0), "position")->Set(15, 20);
     screen1.PrintScreen();
     getch();
-    screen1.FindElement("Window1")->GetComponent(Vector2(0,0), "position")->Set(screen1.FindElement("Window2")->GetComponent(Vector2(0,0), "position")->Get());
+    screen1.FindElement("Window2")->GetComponent(Switch(), "fill")->Set(true);
     screen1.PrintScreen();
     int key = 0;
 }

@@ -17,6 +17,7 @@ public:
     virtual int *GetComponent(int _int, string componentName) = 0;
     virtual string *GetComponent(char _char, string componentName) = 0;
     virtual bool *GetComponent(bool _bool, string componentName) = 0;
+    virtual Switch *GetComponent(Switch _switch, string componentName) = 0;
     virtual void Draw(Vector2 vetcor2, string **frame) = 0;
 };
 
@@ -53,9 +54,10 @@ public:
     Vector2 position;
     Vector2 size;
     string name;
-    string backgroud = "white";
+    string backgroudColor = "yellow";
+    string borderColor = "red";
     string textColor = "black";
-    bool fill = false;
+    Switch fill;
     Window(int _X, int _Y, int _sizeX, int _sizeY, string _name) : position(_X, _Y), size(_sizeX, _sizeY), name(_name)
     {
     }
@@ -66,17 +68,24 @@ public:
         {
             for (int j = 0; j < size.X; j++)
             {
-                if (!fill)
+                if (!fill.switchValue)
                 {
                     if (i == 0 || j == 0 || i == size.Y - 1 || j == size.X - 1)
                     {
-                        frame[i + position.Y][j + position.X] = color.Paint(backgroud, textColor, " ");
+                        frame[i + position.Y][j + position.X] = color.Paint(borderColor, textColor, " ");
                     }
                 }
 
                 else
                 {
-                    frame[i + position.Y][j + position.X] = WHITE_EMPTY;
+                    if (i == 0 || j == 0 || i == size.Y - 1 || j == size.X - 1)
+                    {
+                        frame[i + position.Y][j + position.X] = color.Paint(borderColor, textColor, " ");
+                    }
+                    else
+                    {
+                        frame[i + position.Y][j + position.X] = color.Paint(backgroudColor, textColor, " ");
+                    }
                 }
             }
         }
@@ -113,11 +122,15 @@ public:
 
     bool *GetComponent(bool _bool, string componentName) override
     {
+        return NULL;
+    }
+
+    Switch *GetComponent(Switch _switch, string componentName) override
+    {
         if (componentName == "fill")
         {
             return &fill;
         }
-        return NULL;
     }
 
 private:

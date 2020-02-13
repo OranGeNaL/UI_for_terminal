@@ -7,6 +7,10 @@ class Vector2
 private:
 public:
     int X, Y;
+    Vector2()
+    {
+
+    }
     Vector2(int _X, int _Y) : X(_X), Y(_Y)
     {
     }
@@ -31,6 +35,36 @@ public:
     }
 };
 
+class Switch
+{
+    private:
+    public:
+    bool switchValue = false;
+    Switch()
+    {
+    }
+    Switch(bool value) : switchValue(value)
+    {
+    }
+
+    void Set(bool value)
+    {
+        switchValue = value;
+    }
+    void Set(Switch _switch)
+    {
+        switchValue = _switch.switchValue;
+    }
+    void Set(Switch *_switch)
+    {
+        switchValue = _switch->switchValue;
+    }
+    Switch *Get()
+    {
+        return this;
+    }
+};
+
 class Color
 {
     public:
@@ -48,7 +82,7 @@ class Color
         {"black", "40"},
         {"red", "41"},
         {"green", "42"},
-        {"yellow", "44"},
+        {"yellow", "43"},
         {"blue", "44"},
         {"magenta", "45"},
         {"cyan", "46"},
@@ -58,28 +92,10 @@ class Color
     {
 
     }
-
     std::string Paint(std::string _background, std::string _textColor, std::string text)
     {
         std::string result = "";
         result += "\033[" + textColor.find(_textColor)->second + ';' + background.find(_background)->second + 'm' + text + "\033[0m";
         return result;
     }
-
-    struct foreground
-    {
-        std::string black = "\033[30m \033[0m";
-        std::string red = "\033[31m \033[0m";
-        std::string green = "\033[32m \033[0m";
-        std::string yellow = "\033[33m \033[0m";
-        std::string blue = "\033[34m \033[0m";
-        std::string magenta = "\033[35m \033[0m";
-        std::string cyan = "\033[36m \033[0m";
-        std::string white = "\033[37m \033[0m";
-    };
-
-    struct background
-    {
-
-    };
 };
